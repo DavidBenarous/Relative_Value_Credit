@@ -79,3 +79,18 @@ No additional hyperparameters are required beyond these two choices, making the 
 * **Reversion Signal:** A continuous measure similar to a z-score.
 * **Backtests:** Performance statistics based on signal thresholds.
 * **Visualization:** Time series of residuals, OU fit, and signal history.
+
+---
+
+## Implementation
+ The framework is structured into four distinct modules, each representing an 'agent' with a specific responsibility:
+
+1.  **Data Agent (`src/data_agent.py`)**: Handles loading, cleaning, and synchronizing time series data for financial instruments.
+
+2.  **Modeling Agent (`src/modeling_agent.py`)**: Performs linear regression to calculate beta and residuals, and then fits an Ornstein-Uhlenbeck (OU) mean-reversion process to the residuals.
+
+3.  **Signal Generation Agent (`src/signal_agent.py`)**: Generates trading signals based on the parameters of the fitted OU process.
+
+4.  **Backtesting & Visualization Agent (`src/backtest_agent.py`)**: Provides functionality to run historical backtests and generate visualizations of the analysis, including residuals, OU fit, and trading signals.
+
+A main orchestration script (`main.py`) is included to run the entire pipeline from data ingestion to backtesting. Unit tests have been added for each agent to ensure the correctness of the implementation. A `requirements.txt` file is also provided to manage project dependencies.
