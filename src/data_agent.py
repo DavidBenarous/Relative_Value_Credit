@@ -10,8 +10,8 @@ def load_data(ticker: str) -> pd.DataFrame:
     Returns:
         A pandas DataFrame with the time series data.
     """
-    filepath = f"data/{ticker}.csv"
-    df = pd.read_csv(filepath, index_col="Date", parse_dates=True)
+    filepath = f"src/data/{ticker}.csv"
+    df = pd.read_csv(filepath, index_col="DATE", parse_dates=True)
     return df
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:

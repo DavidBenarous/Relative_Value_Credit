@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from src.data_agent import load_data, clean_data, synchronize_data
-from src.modeling_agent import get_beta, fit_ou_process, is_mean_reverting
+from src.modeling_agent import run_modeling_pipeline, is_mean_reverting
 from src.signal_agent import calculate_equilibrium_volatility, generate_signal
 from src.backtest_agent import run_backtest, plot_residuals, plot_ou_fit, plot_signal
 
@@ -33,10 +33,13 @@ def main():
 
     # --- 2. Modeling Agent ---
     print("\nRunning regression and fitting OU process...")
-    beta, residuals = get_beta(df_x_sync['Close'], df_y_sync['Close'])
+    beta, residuals, theta, mu, sigma = run_modeling_pipeline(
+        df_x_sync["Close"],
+        df_y_sync["Close"],
+        regression_lookback=REGRESSION_LOOKBACK,
+        ou_lookback=OU_LOOKBACK,
+    )
     print(f"Calculated Beta: {beta:.4f}")
-
-    theta, mu, sigma = fit_ou_process(residuals)
     print(f"OU Parameters: θ={theta:.4f}, μ={mu:.4f}, σ={sigma:.4f}")
 
     if not is_mean_reverting(theta):
