@@ -8,6 +8,7 @@ class TestDataAgent(unittest.TestCase):
         df = load_data("CDX.NA.IG.5Y")
         self.assertIsInstance(df, pd.DataFrame)
         self.assertGreater(len(df), 0)
+        self.assertIsInstance(df.index, pd.DatetimeIndex)
 
     def test_clean_data(self):
         df = pd.DataFrame({'Close': [1, 2, None, 4]})
