@@ -1,3 +1,4 @@
+from typing import Tuple
 import numpy as np
 import pandas as pd
 
@@ -34,11 +35,11 @@ def get_beta(
     """
     series_x = _slice_data_by_lookback(series_x, lookback_window)
     series_y = _slice_data_by_lookback(series_y, lookback_window)
-    x = series_x.values
-    y = series_y.values
+    x = series_x.to_numpy(dtype=float)
+    y = series_y.to_numpy(dtype=float)
 
     # Add a constant for the intercept
-    X = np.vstack([x, np.ones(len(x))]).T
+    X = np.column_stack((x, np.ones(len(x), dtype=float)))
 
     # Using numpy's least squares
     beta, intercept = np.linalg.lstsq(X, y, rcond=None)[0]
@@ -62,7 +63,7 @@ def fit_ou_process(
         A tuple containing the OU parameters (theta, mu, sigma).
     """
     residuals = _slice_data_by_lookback(residuals, lookback_window)
-    x = residuals.values
+    x = residuals.to_numpy(dtype=float)
 
     # Discretized OU process regression
     # dX = theta * (mu - X) * dt + sigma * dW
@@ -74,7 +75,7 @@ def fit_ou_process(
     dt = 1 / 252  # Assuming daily data
 
     y = x[1:]
-    X = np.vstack([x[:-1], np.ones(len(x) - 1)]).T
+    X = np.column_stack((x[:-1], np.ones(len(x) - 1, dtype=float)))
 
     beta, alpha = np.linalg.lstsq(X, y, rcond=None)[0]
 
@@ -103,22 +104,27 @@ def is_mean_reverting(theta: float) -> bool:
 
 
 def run_modeling_pipeline(
-    series_x: pd.Series,
-    series_y: pd.Series,
-    regression_lookback: str,
-    ou_lookback: str,
-) -> tuple[float, pd.Series, float, float, float]:
+    series_x: pd.Series, 
+    series_y: pd.Series, 
+    regression_lookback: str = "2Y",
+    ou_lookback: str = "26W"
+) -> Tuple[float, pd.Series, float, float, float]:
     """
-    Runs the full modeling pipeline for a pair of time series.
-
+    Run the full modeling pipeline: regression + OU fitting.
+    
     Args:
-        series_x: The independent variable time series.
-        series_y: The dependent variable time series.
-        regression_lookback: The lookback window for regression (e.g., "2Y").
-        ou_lookback: The lookback window for OU process fitting (e.g., "26W").
-
+        series_x: Reference time series (e.g., 'X' instrument)
+        series_y: Target time series (e.g., 'Y' instrument)  
+        regression_lookback: Lookback window for beta regression (e.g., "2Y", "3Y")
+        ou_lookback: Lookback window for OU process fitting (e.g., "26W", "52W")
+        
     Returns:
-        A tuple containing beta, residuals, and OU parameters (theta, mu, sigma).
+        Tuple of (beta, residuals, theta, mu, sigma) where:
+        - beta: Linear regression coefficient
+        - residuals: Series of regression residuals
+        - theta: OU process speed of reversion parameter
+        - mu: OU process long-term mean parameter  
+        - sigma: OU process volatility parameter
     """
     beta, residuals = get_beta(series_x, series_y, regression_lookback)
     theta, mu, sigma = fit_ou_process(residuals, ou_lookback)

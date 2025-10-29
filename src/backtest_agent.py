@@ -37,7 +37,7 @@ def run_backtest(prices: pd.Series, signals: pd.Series, signal_threshold: float)
         "max_drawdown": max_drawdown,  # return the maximum drawdown
     }
 
-def plot_residuals(residuals: pd.Series, filename: str):  # define function to plot residuals and save to filename
+def plot_residuals(residuals: pd.Series):  # removed filename parameter
     """
     Plots the time series of residuals.
     """
@@ -47,10 +47,10 @@ def plot_residuals(residuals: pd.Series, filename: str):  # define function to p
     plt.xlabel("Date")  # label the x-axis
     plt.ylabel("Residual Value")  # label the y-axis
     plt.grid(True)  # enable grid on the plot
-    plt.savefig(filename)  # save the current figure to the provided filename
+    plt.show()  # display the plot instead of saving
     plt.close()  # close the figure to free memory
 
-def plot_ou_fit(residuals: pd.Series, mu: float, filename: str):  # define function to plot residuals with OU fitted mean line
+def plot_ou_fit(residuals: pd.Series, mu: float):  # removed filename parameter
     """
     Plots the residuals and the fitted OU process mean.
     """
@@ -62,10 +62,10 @@ def plot_ou_fit(residuals: pd.Series, mu: float, filename: str):  # define funct
     plt.ylabel("Residual Value")  # label the y-axis
     plt.legend()  # show the legend
     plt.grid(True)  # enable grid on the plot
-    plt.savefig(filename)  # save the current figure to the provided filename
+    plt.show()  # display the plot instead of saving
     plt.close()  # close the figure to free memory
 
-def plot_signal(signals: pd.Series, filename: str):  # define function to plot signals and save to filename
+def plot_signal(signals: pd.Series):  # removed filename parameter
     """
     Plots the historical trading signal.
     """
@@ -78,5 +78,5 @@ def plot_signal(signals: pd.Series, filename: str):  # define function to plot s
     plt.ylabel("Signal (z-score)")  # label the y-axis
     plt.legend()  # show the legend
     plt.grid(True)  # enable grid on the plot
-    plt.savefig(filename)  # save the current figure to the provided filename
+    plt.show()  # display the plot instead of saving
     plt.close()  # close the figure to free memory
